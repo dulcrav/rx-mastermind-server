@@ -1,7 +1,16 @@
 package com.chrosciu.rxmastermindserver.service;
 
+import com.chrosciu.rxmastermindserver.exception.ImproperSampleFormatException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class GuessServiceTest {
     private static final int LENGTH = 4;
@@ -12,7 +21,7 @@ public class GuessServiceTest {
     @Test
     public void shouldGenerateCodeWithProperLength() {
         String code = guessService.code();
-        Assertions.assertEquals(LENGTH, code.length());
+        assertEquals(LENGTH, code.length());
     }
 
     @Test
@@ -23,36 +32,22 @@ public class GuessServiceTest {
         }
     }
 
-    @Test
-    public void shouldGenerateProperResult1() {
-        String code = "1234";
-        String sample = "1243";
+    @ParameterizedTest
+    @MethodSource("guessTestArgumentsProvider")
+    public void shouldGenerateProperResultForGivenCodeAndSample(String code, String sample, String expectedResult) {
         String result = guessService.guess(code, sample);
-        Assertions.assertEquals("22", result);
+        assertEquals(expectedResult, result);
     }
 
-    @Test
-    public void shouldGenerateProperResult2() {
-        String code = "1234";
-        String sample = "1234";
-        String result = guessService.guess(code, sample);
-        Assertions.assertEquals("40", result);
-    }
-
-    @Test
-    public void shouldGenerateProperResult3() {
-        String code = "1234";
-        String sample = "1233";
-        String result = guessService.guess(code, sample);
-        Assertions.assertEquals("30", result);
-    }
-
-    @Test
-    public void shouldGenerateProperResult4() {
-        String code = "1234";
-        String sample = "4321";
-        String result = guessService.guess(code, sample);
-        Assertions.assertEquals("04", result);
+    private static Stream<Arguments> guessTestArgumentsProvider() {
+        return Stream.of(
+                arguments("1234", "1243", "22"),
+                arguments("1234", "1234", "40"),
+                arguments("1234", "1233", "30"),
+                arguments("1234", "4321", "04"),
+                arguments("1234", "3321", "03"),
+                arguments("1234", "5678", "00")
+        );
     }
 
     @Test
@@ -66,6 +61,6 @@ public class GuessServiceTest {
     public void shouldThrowAssertionForImproperSample() {
         String code = "123";
         String sample = "432";
-        Assertions.assertThrows(IllegalArgumentException.class, () -> guessService.guess(code, sample));
+        Assertions.assertThrows(ImproperSampleFormatException.class, () -> guessService.guess(code, sample));
     }
 }
