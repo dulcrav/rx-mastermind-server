@@ -58,8 +58,10 @@ public class SessionServiceTest {
 
         //then
         StepVerifier.create(result)
+                .expectSubscription()
                 .expectNoEvent(Duration.of(1, ChronoUnit.SECONDS))
-                .thenCancel();
+                .thenCancel()
+                .verify();
 
         //when
         publisher.complete();
