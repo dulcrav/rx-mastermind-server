@@ -33,14 +33,12 @@ public class SessionControllerTest {
     public void shouldCreateSessionAndReturnSessionId() {
         String someSessionId = "baadf00d";
         when(sessionService.create()).thenReturn(Mono.just(someSessionId));
-        byte[] body = webTestClient
+        webTestClient
                 .post()
                 .uri("/session")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody()
-                .returnResult().getResponseBody();
-        String bodyAsString = new String(body);
-        assertEquals(someSessionId, bodyAsString);
+                .expectBody().equals(someSessionId);
+
     }
 }
