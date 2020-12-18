@@ -32,7 +32,7 @@ public class SessionControllerTest {
     @Test
     public void shouldCreateSessionAndReturnSessionId() {
         String someSessionId = "baadf00d";
-        when(sessionController.create()).thenReturn(Mono.just(someSessionId));
+        when(sessionService.create()).thenReturn(Mono.just(someSessionId));
         byte[] body = webTestClient
                 .post()
                 .uri("/session")
