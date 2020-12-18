@@ -21,7 +21,7 @@ public class SessionService {
 
     public Mono<String> guess(String id, String sample) {
         return sessionRepository.findById(id)
-                .flatMap(s -> Mono.just(guessService.guess(s.getCode(), sample)))
+                .map(s -> guessService.guess(s.getCode(), sample))
                 .switchIfEmpty(Mono.error(new SessionNotFoundException()));
     }
 
