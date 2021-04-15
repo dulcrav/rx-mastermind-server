@@ -1,7 +1,7 @@
 package com.chrosciu.rxmastermindserver.service;
 
 import com.chrosciu.rxmastermindserver.model.Session;
-import com.chrosciu.rxmastermindserver.repository.SessionRepository;
+import com.chrosciu.rxmastermindserver.repository.ReactiveSessionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,17 +24,43 @@ public class SessionServiceTest {
     @Mock
     private GuessService guessService;
     @Mock
-    private SessionRepository sessionRepository;
+    private ReactiveSessionRepository reactiveSessionRepository;
 
     @InjectMocks
     private SessionService sessionService;
 
     @Test
+    public void shouldCreateSessionWithProperCodeAndReturnSavedId() {
+        //given
+        long someSessionId = 3;
+        String someCode = "1234";
+        when(guessService.code()).thenReturn(someCode);
+        when(reactiveSessionRepository.save(Mockito.any())).then(invocationOnMock -> {
+            Session session = invocationOnMock.getArgument(0);
+            session.setId(someSessionId);
+            return Mono.just(session);
+        });
+
+        //when
+        Mono<Long> result = sessionService.create();
+
+        //then
+        ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
+        Mockito.verify(reactiveSessionRepository).save(captor.capture());
+        Assertions.assertEquals(someCode, captor.getValue().getCode());
+
+        //then
+        StepVerifier.create(result)
+                .expectNext(someSessionId)
+                .verifyComplete();
+    }
+
+    @Test
     public void shouldDestroySessionWithGivenId() {
         //given
-        String someSessionId = "baadf00d";
+        long someSessionId = 3;
         Mono<Void> success = Mono.empty();
-        when(sessionRepository.deleteById(someSessionId))
+        when(reactiveSessionRepository.deleteById(someSessionId))
                 .thenReturn(success);
 
         //when
@@ -47,10 +73,10 @@ public class SessionServiceTest {
     @Test
     public void shouldDestroySessionWithGivenIdUsingTestPublisher() {
         //given
-        String someSessionId = "baadf00d";
+        long someSessionId = 3;
         TestPublisher<Void> publisher = TestPublisher.createCold();
         Mono<Void> success = publisher.mono();
-        when(sessionRepository.deleteById(someSessionId))
+        when(reactiveSessionRepository.deleteById(someSessionId))
                 .thenReturn(success);
 
         //when
@@ -71,29 +97,4 @@ public class SessionServiceTest {
                 .verifyComplete();
     }
 
-    @Test
-    public void shouldCreateSessionWithProperCodeAndReturnSavedId() {
-        //given
-        String someSessionId = "baadf00d";
-        String someCode = "1234";
-        when(guessService.code()).thenReturn(someCode);
-        when(sessionRepository.save(Mockito.any())).then(invocationOnMock -> {
-            Session session = invocationOnMock.getArgument(0);
-            session.setId(someSessionId);
-            return Mono.just(session);
-        });
-
-        //when
-        Mono<String> result = sessionService.create();
-
-        //then
-        ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
-        Mockito.verify(sessionRepository).save(captor.capture());
-        Assertions.assertEquals(someCode, captor.getValue().getCode());
-
-        //then
-        StepVerifier.create(result)
-                .expectNext(someSessionId)
-                .verifyComplete();
-    }
 }

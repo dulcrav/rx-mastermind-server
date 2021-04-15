@@ -1,9 +1,9 @@
 package com.chrosciu.rxmastermindserver.repository;
 
 import com.chrosciu.rxmastermindserver.model.Session;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SessionRepository extends ReactiveMongoRepository<Session, String> {
+public interface SessionRepository extends JpaRepository<Session, Long> {
 }

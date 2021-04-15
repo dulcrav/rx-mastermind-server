@@ -22,17 +22,17 @@ public class SessionController {
     private final SessionService sessionService;
 
     @PostMapping
-    public Mono<String> create() {
+    public Mono<Long> create() {
         return sessionService.create();
     }
 
     @PutMapping("/{id}/{sample}")
-    public Mono<String> guess(@PathVariable("id") String id, @PathVariable("sample") String sample) {
+    public Mono<String> guess(@PathVariable("id") long id, @PathVariable("sample") String sample) {
         return sessionService.guess(id, sample);
     }
 
     @DeleteMapping("/{id}")
-    public Mono<Void> destroy(@PathVariable("id") String id) {
+    public Mono<Void> destroy(@PathVariable("id") long id) {
         return sessionService.destroy(id);
     }
 
