@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS session(
+   id SERIAL PRIMARY KEY,
+   code VARCHAR
+);

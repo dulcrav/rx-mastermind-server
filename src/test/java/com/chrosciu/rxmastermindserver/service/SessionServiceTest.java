@@ -1,7 +1,7 @@
 package com.chrosciu.rxmastermindserver.service;
 
 import com.chrosciu.rxmastermindserver.model.Session;
-import com.chrosciu.rxmastermindserver.repository.ReactiveSessionRepository;
+import com.chrosciu.rxmastermindserver.repository.SessionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ public class SessionServiceTest {
     @Mock
     private GuessService guessService;
     @Mock
-    private ReactiveSessionRepository reactiveSessionRepository;
+    private SessionRepository sessionRepository;
 
     @InjectMocks
     private SessionService sessionService;
@@ -35,7 +35,7 @@ public class SessionServiceTest {
         long someSessionId = 3;
         String someCode = "1234";
         when(guessService.code()).thenReturn(someCode);
-        when(reactiveSessionRepository.save(Mockito.any())).then(invocationOnMock -> {
+        when(sessionRepository.save(Mockito.any())).then(invocationOnMock -> {
             Session session = invocationOnMock.getArgument(0);
             session.setId(someSessionId);
             return Mono.just(session);
@@ -46,7 +46,7 @@ public class SessionServiceTest {
 
         //then
         ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
-        Mockito.verify(reactiveSessionRepository).save(captor.capture());
+        Mockito.verify(sessionRepository).save(captor.capture());
         Assertions.assertEquals(someCode, captor.getValue().getCode());
 
         //then
@@ -60,7 +60,7 @@ public class SessionServiceTest {
         //given
         long someSessionId = 3;
         Mono<Void> success = Mono.empty();
-        when(reactiveSessionRepository.deleteById(someSessionId))
+        when(sessionRepository.deleteById(someSessionId))
                 .thenReturn(success);
 
         //when
@@ -76,7 +76,7 @@ public class SessionServiceTest {
         long someSessionId = 3;
         TestPublisher<Void> publisher = TestPublisher.createCold();
         Mono<Void> success = publisher.mono();
-        when(reactiveSessionRepository.deleteById(someSessionId))
+        when(sessionRepository.deleteById(someSessionId))
                 .thenReturn(success);
 
         //when

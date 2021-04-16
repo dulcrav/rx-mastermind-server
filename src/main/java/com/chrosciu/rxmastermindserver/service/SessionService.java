@@ -2,7 +2,6 @@ package com.chrosciu.rxmastermindserver.service;
 
 import com.chrosciu.rxmastermindserver.exception.SessionNotFoundException;
 import com.chrosciu.rxmastermindserver.model.Session;
-import com.chrosciu.rxmastermindserver.repository.ReactiveSessionRepository;
 import com.chrosciu.rxmastermindserver.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SessionService {
     private final GuessService guessService;
-    private final ReactiveSessionRepository sessionRepository;
+    private final SessionRepository sessionRepository;
 
     public Mono<Long> create() {
         String code = guessService.code();
