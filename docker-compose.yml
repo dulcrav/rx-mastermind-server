@@ -9,3 +9,14 @@ services:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: mysecretpassword
+
+  pgadmin:
+    image: dpage/pgadmin4:5.1
+    restart: always
+    ports:
+      - 8088:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.org
+      PGADMIN_DEFAULT_PASSWORD: mysecretpassword
+    links:
+      - "db:pgsql-server"
