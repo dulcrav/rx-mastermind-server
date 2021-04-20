@@ -11,6 +11,10 @@ public class GuessService {
     private static final int LENGTH = 4;
     private static final String NUMBERS = "0123456789";
 
+    /**
+     * Generate random code consisting of 4 digits
+     * @return generated code (as String)
+     */
     public String code() {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
@@ -20,9 +24,24 @@ public class GuessService {
         return sb.toString();
     }
 
+    /**
+     * Take provided sample and check how many digits of given code are guessed correctly with this sample
+     * @param code Code to guess
+     * @param sample Sample to be evaluated
+     * @return String consisting two digits.
+     * First one determines how many digits are guessed in correct place
+     * Second one - how many are guessed correctly but in incorrect place
+     * @throws ImproperSampleFormatException if sample is not in valid format
+     * @throws IllegalArgumentException if code is not in valid format
+     */
     public String guess(@NonNull String code, @NonNull String sample) {
         if (sample.length() != LENGTH) {
             throw new ImproperSampleFormatException();
+        }
+        for (char c : sample.toCharArray()) {
+            if (NUMBERS.indexOf(c) == -1) {
+                throw new ImproperSampleFormatException();
+            }
         }
         if (code.length() != LENGTH) {
             throw new IllegalArgumentException();

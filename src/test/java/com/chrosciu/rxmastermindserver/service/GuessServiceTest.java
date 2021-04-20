@@ -58,9 +58,16 @@ public class GuessServiceTest {
     }
 
     @Test
-    public void shouldThrowAssertionForImproperSample() {
+    public void shouldThrowAssertionForSampleOfImproperLength() {
         String code = "123";
         String sample = "432";
+        Assertions.assertThrows(ImproperSampleFormatException.class, () -> guessService.guess(code, sample));
+    }
+
+    @Test
+    public void shouldThrowAssertionForSampleOfImproperCharacters() {
+        String code = "123";
+        String sample = "43A2";
         Assertions.assertThrows(ImproperSampleFormatException.class, () -> guessService.guess(code, sample));
     }
 }
