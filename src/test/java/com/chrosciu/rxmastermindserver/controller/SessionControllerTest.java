@@ -10,8 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +38,7 @@ public class SessionControllerTest {
                 .uri("/session")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().equals(someSessionId);
+                .expectBody().json(String.valueOf(someSessionId));
 
     }
 
@@ -55,7 +53,7 @@ public class SessionControllerTest {
                 .uri("/session/{sessionId}/{sample}", someSessionId, someSample)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().equals(someGuess);
+                .expectBody().json(someGuess);
     }
 
     @Test
